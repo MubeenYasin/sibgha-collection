@@ -26,3 +26,11 @@ export const verifyToken = async (req, res, next) => {
         res.status(401).json({ message: 'Invalid access token' });
     }
 };
+
+// Add this after verifyToken function
+export const isAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+    }
+    next();
+};

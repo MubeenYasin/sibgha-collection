@@ -3,6 +3,8 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import connectDB from "./config/db.js"
 import authRoutes from "./routes/auth.routes.js"
+import productRoutes from './routes/product.routes.js';
+
 
 import config from "./config/config.js"
 const PORT = config.PORT
@@ -23,6 +25,8 @@ connectDB();
 
 //Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes);
+
 
 app.listen(PORT, () => { console.log(`Sibgha Server is connected : http://localhost:${PORT}`) })
 

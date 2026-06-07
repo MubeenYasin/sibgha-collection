@@ -4,35 +4,49 @@ import { v2 as cloudinary } from 'cloudinary'
 // Get all products
 export const getAllProducts = async (req, res) => {
     try {
-        const { category, minPrice, maxPrice, search } = req.query;
+        const { category, minPrice, maxPrice, search, page, limit } = req.query
 
-        // Build filter object
-        let filter = { isActive: true };
+        let filter = { isActive: true }
 
-        if (category) filter.category = category;
+        if (category) filter.category = category
 
         if (minPrice || maxPrice) {
-            filter.price = {};
-            if (minPrice) filter.price.$gte = Number(minPrice);
-            if (maxPrice) filter.price.$lte = Number(maxPrice);
+            filter.price = {}
+            if (minPrice) filter.price.$gte = Number(minPrice)
+            if (maxPrice) filter.price.$lte = Number(maxPrice)
         }
 
         if (search) {
-            filter.name = { $regex: search, $options: 'i' };
+            filter.name = { $regex: search, $options: 'i' }
         }
 
-        const products = await Product.find(filter).sort({ createdAt: -1 });
+        const pageNumber = Number(page) || 1
+        const limitNumber = Number(limit) || 8
+        const skip = (pageNumber - 1) * limitNumber
+
+        const [products, totalProducts] = await Promise.all([
+            Product.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limitNumber),
+            Product.countDocuments(filter)
+        ])
+
+        const totalPages = Math.ceil(totalProducts / limitNumber)
 
         res.status(200).json({
             success: true,
             count: products.length,
+            totalProducts,
+            totalPages,
+            currentPage: pageNumber,
             products
-        });
+        })
 
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message })
     }
-};
+}
 
 // Get single product
 export const getProductById = async (req, res) => {

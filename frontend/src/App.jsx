@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import ProductsPage from "./pages/ProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
 import ProductDetailPage from './pages/ProductDetailPage'
+import EditProductPage from "./pages/EditProduct"
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/admin/create-product" element={<CreateProductPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/admin/edit-product/:id" element={<EditProductPage />} />
       </Routes>
     </BrowserRouter>
   );

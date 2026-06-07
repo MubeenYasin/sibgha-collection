@@ -100,11 +100,33 @@ export const createProduct = async (req, res) => {
 // Update product - admin only
 export const updateProduct = async (req, res) => {
     try {
+        const { name, description, price, category, stock } = req.body
+
+        const updateData = { name, description, price, category, stock }
+
+        // If new images uploaded
+        if (req.files && req.files.length > 0) {
+            const imageUrls = []
+            for (const file of req.files) {
+                const result = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream(
+                        { folder: 'sibgha-collection' },
+                        (error, result) => {
+                            if (error) reject(error)
+                            else resolve(result)
+                        }
+                    ).end(file.buffer)
+                })
+                imageUrls.push(result.secure_url)
+            }
+            updateData.images = imageUrls
+        }
+
         const product = await Product.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
-        );
+        )
 
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });

@@ -14,7 +14,7 @@ const ProductsPage = () => {
         try {
             const res = await api.get('/products')
             setProducts(res.data.products)
-        } catch (err) {
+        } catch{
             setError('Failed to load products')
         } finally {
             setLoading(false)

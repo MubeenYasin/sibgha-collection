@@ -1,4 +1,5 @@
 import Product from '../models/product.model.js';
+import { v2 as cloudinary } from 'cloudinary'
 
 // Get all products
 export const getAllProducts = async (req, res) => {
@@ -55,22 +56,41 @@ export const getProductById = async (req, res) => {
 // Create product - admin only
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, images, stock } = req.body;
+        const { name, description, price, category, stock } = req.body;
+
+        // Get image URLs from cloudinary
+        // Upload images to cloudinary
+        const imageUrls = []
+
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const result = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream(
+                        { folder: 'sibgha-collection' },
+                        (error, result) => {
+                            if (error) reject(error)
+                            else resolve(result)
+                        }
+                    ).end(file.buffer)
+                })
+                imageUrls.push(result.secure_url)
+            }
+        }
 
         const product = await Product.create({
             name,
             description,
             price,
             category,
-            images,
-            stock
-        });
+            stock,
+            images: imageUrls
+        })
 
         res.status(201).json({
             success: true,
             message: 'Product created successfully',
             product
-        });
+        })
 
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -35,6 +35,11 @@ const Navbar = () => {
 
         {user ? (
           <div className="flex items-center gap-4">
+            {user.role === "admin" && (
+              <Link to="/admin/create-product" className="hover:underline">
+                Add Product
+              </Link>
+            )}
             <span>Hello, {user.name}!</span>
             <button
               onClick={handleLogout}

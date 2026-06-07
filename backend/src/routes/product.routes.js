@@ -7,6 +7,7 @@ import {
     deleteProduct
 } from '../controllers/product.controller.js';
 import { verifyToken, isAdmin } from '../middleware/auth.middleware.js';
+import { upload } from '../config/cloudinary.js';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
 // Admin only routes
-router.post('/', verifyToken, isAdmin, createProduct);
+router.post('/', verifyToken, isAdmin, upload.array('images', 5), createProduct);
 router.put('/:id', verifyToken, isAdmin, updateProduct);
 router.delete('/:id', verifyToken, isAdmin, deleteProduct);
 

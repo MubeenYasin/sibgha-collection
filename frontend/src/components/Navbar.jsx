@@ -8,12 +8,12 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate("/login");
+      navigate("/");
     } catch {
       // even if api fails - clear local storage and redirect
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
-      navigate("/login");
+      navigate("/");
     }
   };
 

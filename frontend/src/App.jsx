@@ -5,6 +5,7 @@ import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import ProductsPage from "./pages/ProductsPage";
 import CreateProductPage from "./pages/CreateProductPage";
+import ProductDetailPage from './pages/ProductDetailPage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/admin/create-product" element={<CreateProductPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
       </Routes>
     </BrowserRouter>
   );

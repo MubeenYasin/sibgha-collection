@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const navigate = useNavigate()
 
     useEffect(() => {
         fetchProducts()
@@ -14,7 +16,7 @@ const ProductsPage = () => {
         try {
             const res = await api.get('/products')
             setProducts(res.data.products)
-        } catch{
+        } catch (err) {
             setError('Failed to load products')
         } finally {
             setLoading(false)
@@ -46,21 +48,19 @@ const ProductsPage = () => {
                     {products.map((product) => (
                         <div
                             key={product._id}
-                            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+                            onClick={() => navigate(`/products/${product._id}`)}
+                            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer"
                         >
-                            {/* Product Image */}
                             <img
                                 src={product.images[0] || 'https://placehold.co/300x200?text=No+Image'}
                                 alt={product.name}
                                 className="w-full h-48 object-cover"
                             />
-
-                            {/* Product Info */}
                             <div className="p-4">
                                 <h3 className="font-bold text-gray-800 text-lg">
                                     {product.name}
                                 </h3>
-                                <p className="text-gray-500 text-sm mt-1">
+                                <p className="text-gray-500 text-sm mt-1 line-clamp-2">
                                     {product.description}
                                 </p>
                                 <div className="flex justify-between items-center mt-3">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
@@ -12,6 +13,10 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const [quantity, setQuantity] = useState(1);
+  const [cartMessage, setCartMessage] = useState("");
+  const { addToCart, loading: cartLoading } = useCart();
 
   useEffect(() => {
     fetchProduct();
@@ -48,8 +53,23 @@ const ProductDetailPage = () => {
     try {
       await api.delete(`/products/${id}`);
       navigate("/products");
-    } catch{
+    } catch {
       setError("Failed to delete product");
+    }
+  };
+
+  //  handleAddToCart function
+  const handleAddToCart = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    const result = await addToCart(product._id, quantity);
+    if (result.success) {
+      setCartMessage("Added to cart successfully!");
+      setTimeout(() => setCartMessage(""), 3000);
+    } else {
+      setCartMessage(result.message || "Failed to add to cart");
     }
   };
   return (
@@ -122,6 +142,42 @@ const ProductDetailPage = () => {
 
             {/* Divider */}
             <hr className="my-4" />
+
+            {/* Add to Cart Section */}
+            {user && user.role !== "admin" && (
+              <div className="mt-4">
+                {cartMessage && (
+                  <div
+                    className={`p-3 rounded mb-3 ${cartMessage.includes("success") ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}
+                  >
+                    {cartMessage}
+                  </div>
+                )}
+                <div className="flex items-center gap-3 mb-3">
+                  <label className="text-gray-700 font-medium">Quantity:</label>
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="bg-gray-200 w-8 h-8 rounded-full hover:bg-gray-300 font-bold"
+                  >
+                    -
+                  </button>
+                  <span className="font-bold text-lg">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="bg-gray-200 w-8 h-8 rounded-full hover:bg-gray-300 font-bold"
+                  >
+                    +
+                  </button>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={cartLoading || product.stock === 0}
+                  className="w-full bg-pink-600 text-white py-3 rounded-lg hover:bg-pink-700 disabled:opacity-50 font-bold"
+                >
+                  {cartLoading ? "Adding..." : "Add to Cart 🛒"}
+                </button>
+              </div>
+            )}
 
             {/* Admin Buttons */}
             {user && user.role === "admin" && (

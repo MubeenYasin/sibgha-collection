@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js"
 import productRoutes from './routes/product.routes.js'
 import config from "./config/config.js"
 import cartRoutes from './routes/cart.routes.js'
+import reviewRoutes from './routes/review.routes.js'
 
 
 const PORT = config.PORT
@@ -32,6 +33,8 @@ app.use('/api/products', productRoutes)
 
 app.get('/', (req, res) => res.send('<h1>Welcom to Sibgha Collection</h1>'))
 app.use('/api/cart', cartRoutes)
+
+app.use('/api/reviews', reviewRoutes)
 
 app.listen(PORT, () => { console.log(`Sibgha Server is connected : http://localhost:${PORT}`) })
 

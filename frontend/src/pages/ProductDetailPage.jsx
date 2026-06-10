@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import api from "../services/api";
 import toast from "react-hot-toast";
+import ReviewSection from "../components/ReviewSection";
 
 const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
@@ -199,6 +200,12 @@ const ProductDetailPage = () => {
             </button>
           </div>
         </div>
+
+        {/* Reviews Section */}
+        <div className="px-8 pb-8">
+          <ReviewSection productId={id} />
+        </div>
+      
       </div>
     </div>
   );

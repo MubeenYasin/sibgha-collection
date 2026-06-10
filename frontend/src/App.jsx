@@ -9,7 +9,8 @@ import EditProductPage from "./pages/EditProductPage";
 import CartPage from "./pages/CartPage";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ProfilePage from "./pages/ProfilePage"
+import ProfilePage from "./pages/ProfilePage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
@@ -40,11 +41,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin/edit-product/:id"
           element={
             <ProtectedRoute adminOnly={true}>
               <EditProductPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <DashboardPage />
             </ProtectedRoute>
           }
         />

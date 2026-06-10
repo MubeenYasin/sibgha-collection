@@ -36,9 +36,14 @@ const Navbar = () => {
         {user ? (
           <div className="flex items-center gap-12">
             {user.role === "admin" && (
-              <Link to="/admin/create-product" className="hover:underline">
-                Add Product
-              </Link>
+              <>
+                <Link to="/admin/dashboard" className="hover:underline">
+                  Dashboard
+                </Link>
+                <Link to="/admin/create-product" className="hover:underline">
+                  Add Product
+                </Link>
+              </>
             )}
 
             {/* Cart Icon */}

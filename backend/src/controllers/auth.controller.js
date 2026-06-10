@@ -1,6 +1,51 @@
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
+import Cart from '../models/cart.model.js'
+import Product from '../models/product.model.js'
+
+// Get Dashboard Stats
+export const getDashboardStats = async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments({ role: 'user' })
+        const totalProducts = await Product.countDocuments({ isActive: true })
+        const totalCarts = await Cart.countDocuments()
+
+        // Recent users
+        const recentUsers = await User.find({ role: 'user' })
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .select('name email createdAt')
+
+        // Recent products
+        const recentProducts = await Product.find({ isActive: true })
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .select('name price category images')
+
+        // Products by category
+        const productsByCategory = await Product.aggregate([
+            { $match: { isActive: true } },
+            { $group: { _id: '$category', count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
+        ])
+
+        res.status(200).json({
+            success: true,
+            stats: {
+                totalUsers,
+                totalProducts,
+                totalCarts,
+            },
+            recentUsers,
+            recentProducts,
+            productsByCategory
+        })
+
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
 
 // Generate Access Token
 const generateAccessToken = (userId) => {

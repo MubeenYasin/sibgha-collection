@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import api from "../services/api";
+import toast from "react-hot-toast";
 
 const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
@@ -15,7 +16,6 @@ const ProductDetailPage = () => {
   const { user } = useAuth();
 
   const [quantity, setQuantity] = useState(1);
-  const [cartMessage, setCartMessage] = useState("");
   const { addToCart, loading: cartLoading } = useCart();
 
   useEffect(() => {
@@ -66,10 +66,9 @@ const ProductDetailPage = () => {
     }
     const result = await addToCart(product._id, quantity);
     if (result.success) {
-      setCartMessage("Added to cart successfully!");
-      setTimeout(() => setCartMessage(""), 3000);
+      toast.success("Added to cart!");
     } else {
-      setCartMessage(result.message || "Failed to add to cart");
+      toast.error(result.message || "Failed to add to cart");
     }
   };
   return (
@@ -146,13 +145,6 @@ const ProductDetailPage = () => {
             {/* Add to Cart Section */}
             {user && user.role !== "admin" && (
               <div className="mt-4">
-                {cartMessage && (
-                  <div
-                    className={`p-3 rounded mb-3 ${cartMessage.includes("success") ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}
-                  >
-                    {cartMessage}
-                  </div>
-                )}
                 <div className="flex items-center gap-3 mb-3">
                   <label className="text-gray-700 font-medium">Quantity:</label>
                   <button

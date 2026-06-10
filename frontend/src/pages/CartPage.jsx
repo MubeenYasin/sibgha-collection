@@ -1,11 +1,24 @@
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import toast from 'react-hot-toast'
 
 const CartPage = () => {
     const { cart, updateQuantity, removeFromCart, clearCart, loading } = useCart()
     const { user } = useAuth()
     const navigate = useNavigate()
+
+    // Add toast to clearCart
+const handleClearCart = async () => {
+    await clearCart()
+    toast.success('Cart cleared!')
+}
+
+// Add toast to removeFromCart
+const handleRemove = async (productId) => {
+    await removeFromCart(productId)
+    toast.success('Item removed from cart!')
+}
 
     if (!user) {
         return (
@@ -94,7 +107,7 @@ const CartPage = () => {
                                         Rs. {item.product?.price * item.quantity}
                                     </p>
                                     <button
-                                        onClick={() => removeFromCart(item.product._id)}
+                                        onClick={() => handleRemove (item.product._id)}
                                         className="text-red-500 hover:text-red-700 text-sm"
                                     >
                                         Remove
@@ -105,7 +118,7 @@ const CartPage = () => {
 
                         {/* Clear Cart */}
                         <button
-                            onClick={clearCart}
+                            onClick={handleClearCart }
                             className="text-red-500 hover:underline text-sm"
                         >
                             Clear Cart

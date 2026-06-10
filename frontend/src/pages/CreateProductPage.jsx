@@ -1,7 +1,7 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const CreateProductPage = () => {
   const [formData, setFormData] = useState({
@@ -13,12 +13,9 @@ const CreateProductPage = () => {
   });
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { user } = useAuth();
-//   const navigate = useNavigate();
 
   if (!user || user.role !== "admin") {
     return (
@@ -41,50 +38,34 @@ const CreateProductPage = () => {
     setPreviews(previewUrls);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
+const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
 
     try {
-      // Use FormData to send files
-      const data = new FormData();
-      data.append("name", formData.name);
-      data.append("description", formData.description);
-      data.append("price", formData.price);
-      data.append("category", formData.category);
-      data.append("stock", formData.stock);
+        const data = new FormData()
+        data.append('name', formData.name)
+        data.append('description', formData.description)
+        data.append('price', formData.price)
+        data.append('category', formData.category)
+        data.append('stock', formData.stock)
+        images.forEach(image => data.append('images', image))
 
-      // Add each image
-      images.forEach((image) => {
-        data.append("images", image);
-      });
+        await api.post('/products', data, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
 
-      await api.post("/products", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        toast.success('Product created successfully!')
+        setFormData({ name: '', description: '', price: '', category: '', stock: '' })
+        setImages([])
+        setPreviews([])
 
-      setSuccess("Product created successfully!");
-      setFormData({
-        name: "",
-        description: "",
-        price: "",
-        category: "",
-        stock: "",
-      });
-      setImages([]);
-      setPreviews([]);
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Failed to create product");
-      }
+        toast.error(err.response?.data?.message || 'Failed to create product')
     } finally {
-      setLoading(false);
+        setLoading(false)
     }
-  };
+}
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
@@ -92,18 +73,6 @@ const CreateProductPage = () => {
         <h2 className="text-3xl font-bold text-pink-600 mb-6 text-center">
           Create New Product
         </h2>
-
-        {error && (
-          <div className="bg-red-100 text-red-600 p-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-green-100 text-green-600 p-3 rounded mb-4">
-            {success}
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
           {/* Name */}

@@ -53,7 +53,7 @@ const Navbar = () => {
 
             {/* user profile */}
             <Link to="/profile" className="hover:underline">
-              Hello, {user.name}!
+              Hello, {user.name}
             </Link>
 
             <button

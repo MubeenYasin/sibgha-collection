@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -14,7 +15,6 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [activeTab, setActiveTab] = useState("profile");
 
   const { user, logout, updateUser } = useAuth();
@@ -38,7 +38,7 @@ const ProfilePage = () => {
         password: "",
         newPassword: "",
       });
-    } catch{
+    } catch {
       setError("Failed to load profile");
     } finally {
       setLoading(false);
@@ -51,24 +51,16 @@ const ProfilePage = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
     setUpdating(true);
 
     try {
       const res = await api.put("/auth/profile", formData);
       setProfile(res.data.user);
-      setSuccess("Profile updated successfully!");
-      setFormData((prev) => ({ ...prev, password: "", newPassword: "" }));
-
-      // ← Add this line to update navbar instantly
       updateUser(res.data.user);
+      toast.success("Profile updated successfully!");
+      setFormData((prev) => ({ ...prev, password: "", newPassword: "" }));
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else {
-        setError("Failed to update profile");
-      }
+      toast.error(err.response?.data?.message || "Failed to update profile");
     } finally {
       setUpdating(false);
     }
@@ -142,12 +134,6 @@ const ProfilePage = () => {
           {error && (
             <div className="bg-red-100 text-red-600 p-3 rounded mb-4">
               {error}
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-100 text-green-600 p-3 rounded mb-4">
-              {success}
             </div>
           )}
 

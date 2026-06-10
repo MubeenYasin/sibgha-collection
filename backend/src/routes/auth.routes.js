@@ -1,5 +1,12 @@
 import { Router } from 'express';
-import { register, login, logout, refreshAccessToken } from '../controllers/auth.controller.js';
+import {
+    register,
+    login,
+    logout,
+    refreshAccessToken,
+    getProfile,
+    updateProfile
+} from '../controllers/auth.controller.js';
 import { verifyToken } from '../middleware/auth.middleware.js';
 
 
@@ -9,5 +16,7 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', verifyToken, logout);
 router.post('/refresh-token', refreshAccessToken);
+router.get('/profile', verifyToken, getProfile);
+router.put('/profile', verifyToken, updateProfile);
 
 export default router;

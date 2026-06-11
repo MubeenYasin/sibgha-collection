@@ -12,7 +12,7 @@ const HomePage = () => {
           Welcome to Sibgha Collection
         </h1>
         <p className="text-xl mb-8">
-          Discover the latest ladies fashion collection
+          Discover the latest fashion collection
         </p>
         <Link
           to="/products"
@@ -44,8 +44,8 @@ const HomePage = () => {
       {user && (
         <div className="text-center py-6">
           <p className="text-gray-600 text-lg">
-            Welcome back,{" "}
-            <span className="text-pink-600 font-bold">{user.name}</span>!
+            Copyright 2020 ©{" "}
+            <span className="text-pink-600 font-bold">Mubeen Yasin</span>
           </p>
         </div>
       )}

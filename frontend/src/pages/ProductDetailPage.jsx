@@ -5,6 +5,8 @@ import { useCart } from "../context/CartContext";
 import api from "../services/api";
 import toast from "react-hot-toast";
 import ReviewSection from "../components/ReviewSection";
+import { useWishlist } from "../context/WishlistContext";
+import { Heart } from "lucide-react";
 
 const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
@@ -18,6 +20,7 @@ const ProductDetailPage = () => {
 
   const [quantity, setQuantity] = useState(1);
   const { addToCart, loading: cartLoading } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     fetchProduct();
@@ -72,6 +75,24 @@ const ProductDetailPage = () => {
       toast.error(result.message || "Failed to add to cart");
     }
   };
+
+  const handleWishlist = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (isInWishlist(product._id)) {
+      await removeFromWishlist(product._id);
+      toast.success("Removed from wishlist!");
+    } else {
+      const result = await addToWishlist(product._id);
+      if (result.success) {
+        toast.success("Added to wishlist!");
+      } else {
+        toast.error(result.message || "Failed to add to wishlist");
+      }
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
       <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
@@ -87,6 +108,22 @@ const ProductDetailPage = () => {
               alt={product.name}
               className="w-full h-96 object-cover rounded-lg"
             />
+
+            {/* wishlist button */}
+            <button
+              onClick={handleWishlist}
+              className={`flex items-center gap-2 mt-2 px-4 py-2 rounded-lg border ${
+                isInWishlist(product?._id)
+                  ? "bg-red-50 border-red-300 text-red-500"
+                  : "bg-white border-gray-300 text-gray-600 hover:bg-pink-50"
+              }`}
+            >
+              <Heart
+                size={20}
+                fill={isInWishlist(product?._id) ? "currentColor" : "none"}
+              />
+              {isInWishlist(product?._id) ? "Wishlisted" : "Add to Wishlist"}
+            </button>
 
             {/* Thumbnail Images */}
             {product.images.length > 1 && (
@@ -205,7 +242,6 @@ const ProductDetailPage = () => {
         <div className="px-8 pb-8">
           <ReviewSection productId={id} />
         </div>
-      
       </div>
     </div>
   );

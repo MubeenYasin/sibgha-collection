@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import DashboardPage from "./pages/DashboardPage";
+import WishlistPage from './pages/WishlistPage'
 
 function App() {
   return (
@@ -59,6 +60,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/wishlist" element={<WishlistPage />} />
+        
       </Routes>
     </BrowserRouter>
   );

@@ -56,7 +56,6 @@ const Navbar = () => {
                   </Link>
                 </>
               )}
-
               {/* Wishlist Icon */}
               <Link to="/wishlist" className="relative">
                 <Heart size={26} />
@@ -66,7 +65,6 @@ const Navbar = () => {
                   </span>
                 )}
               </Link>
-
               {/* Cart Icon */}
               <Link to="/cart" className="relative">
                 <ShoppingCart size={26} />
@@ -77,9 +75,26 @@ const Navbar = () => {
                 )}
               </Link>
 
-              <Link to="/profile" className="hover:underline">
-                Hello, {user.name}
+              {/* user */}
+              <Link
+                to="/profile"
+                className="flex items-center gap-2 hover:underline"
+              >
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt="avatar"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                  />
+                ) : (
+                  <div className="bg-white text-pink-600 rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden lg:inline">{user.name}</span>
               </Link>
+
+              {/* logout */}
               <button
                 onClick={handleLogout}
                 className="bg-white text-pink-600 px-4 py-1 rounded hover:bg-gray-100"

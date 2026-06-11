@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 import Cart from '../models/cart.model.js'
 import Product from '../models/product.model.js'
+import{v2 as cloudinary} from 'cloudinary'
 
 // Get Dashboard Stats
 export const getDashboardStats = async (req, res) => {
@@ -211,6 +212,7 @@ export const getProfile = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                avatar: user.avatar,
                 createdAt: user.createdAt
             }
         })
@@ -253,7 +255,49 @@ export const updateProfile = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                avatar: user.avatar
+            }
+        })
+
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+// Update Avatar
+export const updateAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No image uploaded' })
+        }
+
+        // Upload to cloudinary
+        const result = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { folder: 'sibgha-collection/avatars' },
+                (error, result) => {
+                    if (error) reject(error)
+                    else resolve(result)
+                }
+            ).end(req.file.buffer)
+        })
+
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            { avatar: result.secure_url },
+            { new: true }
+        )
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile picture updated successfully',
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar: user.avatar
             }
         })
 

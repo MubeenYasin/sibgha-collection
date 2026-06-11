@@ -17,6 +17,10 @@ const ProfilePage = () => {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("profile");
 
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
   const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
 
@@ -71,6 +75,38 @@ const ProfilePage = () => {
       <div className="text-center py-20 text-pink-600 text-xl">Loading...</div>
     );
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!avatarFile) return;
+
+    setUploadingAvatar(true);
+    try {
+      const data = new FormData();
+      data.append("avatar", avatarFile);
+
+      const res = await api.put("/auth/avatar", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setProfile(res.data.user);
+      updateUser(res.data.user);
+      toast.success("Profile picture updated!");
+      setAvatarFile(null);
+      setAvatarPreview("");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update picture");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
       <div className="max-w-3xl mx-auto">
@@ -82,12 +118,37 @@ const ProfilePage = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center gap-4">
             {/* Avatar */}
-            <div className="bg-pink-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
-              {profile?.name?.charAt(0).toUpperCase()}
+            <div className="relative">
+              {avatarPreview || profile?.avatar ? (
+                <img
+                  src={avatarPreview || profile?.avatar}
+                  alt="avatar"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-pink-200"
+                />
+              ) : (
+                <div className="bg-pink-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
+                  {profile?.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
+
+              {/* Camera Icon Overlay */}
+              <label
+                htmlFor="avatar-upload"
+                className="absolute -bottom-1 -right-1 bg-pink-600 text-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer hover:bg-pink-700 text-xs"
+              >
+                📷
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
             </div>
 
             {/* Info */}
-            <div>
+            <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-800">
                 {profile?.name}
               </h3>
@@ -102,6 +163,17 @@ const ProfilePage = () => {
                 {profile?.role}
               </span>
             </div>
+
+            {/* Save Button - shows when new image selected */}
+            {avatarPreview && (
+              <button
+                onClick={handleAvatarUpload}
+                disabled={uploadingAvatar}
+                className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 disabled:opacity-50 text-sm"
+              >
+                {uploadingAvatar ? "Uploading..." : "Save Photo"}
+              </button>
+            )}
           </div>
         </div>
 

@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import DashboardPage from "./pages/DashboardPage";
 import WishlistPage from './pages/WishlistPage'
+import WhatsAppButton from "./components/WhatsAppButton";
 
 function App() {
   return (
@@ -62,8 +63,9 @@ function App() {
         />
 
         <Route path="/wishlist" element={<WishlistPage />} />
-        
+
       </Routes>
+      <WhatsAppButton />
     </BrowserRouter>
   );
 }

@@ -124,8 +124,9 @@ export const login = async (req, res) => {
         // Send refresh token in cookie
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: false, // production mein true karna
-            sameSite: 'strict',
+            // secure: false, // production mein true karna
+            secure: process.env.NODE_ENV === 'production', // true on http
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 

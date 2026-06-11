@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 import Cart from '../models/cart.model.js'
 import Product from '../models/product.model.js'
-import{v2 as cloudinary} from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 
 // Get Dashboard Stats
 export const getDashboardStats = async (req, res) => {
@@ -125,7 +125,7 @@ export const login = async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             // secure: false, // production mein true karna
-            secure: process.env.NODE_ENV === 'production', // true on http
+            secure: process.env.NODE_ENV === 'production',  // true on https
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });

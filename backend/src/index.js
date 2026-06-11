@@ -16,7 +16,7 @@ const app = express()
 // CORS must be first!
 app.use(cors({
     // origin: 'http://localhost:5173',
-    origin: 'sibgha-collection.vercel.app',
+    origin: 'https://sibgha-collection.vercel.app',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']

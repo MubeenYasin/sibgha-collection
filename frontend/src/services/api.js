@@ -32,7 +32,7 @@ api.interceptors.response.use(
             try {
                 const res = await axios.post(
                     // 'http://localhost:5000/api/auth/refresh-token',
-                    'https://sibgha-collection-backend.onrender.com/api/auth/refresh-token',
+                    'https://sibgha-collection.onrender.com/api/auth/refresh-token',
                     {},
                     { withCredentials: true }
                 )
